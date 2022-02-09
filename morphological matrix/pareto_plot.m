@@ -129,6 +129,35 @@ final_orbit = readtable("Master Morphological Matrix.xlsx", opts, "UseExcel", fa
 % Clear temporary variables
 clear opts
 
+%% Inputs
+
+%%%%%%%%%%%% Weights %%%%%%%%%%%%%
+
+% payload
+cw1 = 1/5; % cost
+vw1 = 1/5; % mission value
+rw1 = 1/5; % success/reliability
+
+% second stage propulsion system cost weight
+cw2 = 1/5; % cost
+vw2 = 1/5; % mission value
+rw2 = 1/5; % success/reliability
+
+% lift off stage cost weight
+cw3 = 1/5; % cost
+vw3 = 1/5; % mission value
+rw3 = 1/5; % success/reliability
+
+% inclination change method cost weight
+cw4 = 1/5; % cost
+vw4 = 1/5; % mission value
+rw4 = 1/5; % success/reliability
+
+% final orbit cost weight
+cw5 = 1/5; % cost
+vw5 = 1/5; % mission value
+rw5 = 1/5; % success/reliability
+
 %% create permuation matrix
 
 % number of options of each category
@@ -170,61 +199,61 @@ for i = 1:N_pay
                     dsi(n,:) = [i j k l m];
 
                     % reliabilities
-                    reliabilities(n,1) = (payload_package.Reliability1(i) + ...
-                        second_stage.Reliability1(j) + ...
-                        lift_off_stage.Reliability1(k) + ...
-                        inclination_change.Reliability1(l) + ...
-                        final_orbit.Reliability1(m))/5;
+                    reliabilities(n,1) = rw1*payload_package.Reliability1(i) + ...
+                        rw2*second_stage.Reliability1(j) + ...
+                        rw3*lift_off_stage.Reliability1(k) + ...
+                        rw4*inclination_change.Reliability1(l) + ...
+                        rw5*final_orbit.Reliability1(m);
 
-                    reliabilities(n,2) = (payload_package.Reliability2(i) + ...
-                        second_stage.Reliability2(j) + ...
-                        lift_off_stage.Reliability2(k) + ...
-                        inclination_change.Reliability2(l) + ...
-                        final_orbit.Reliability2(m))/5;
+                    reliabilities(n,2) = rw1*payload_package.Reliability2(i) + ...
+                        rw2*second_stage.Reliability2(j) + ...
+                        rw3*lift_off_stage.Reliability2(k) + ...
+                        rw4*inclination_change.Reliability2(l) + ...
+                        rw5*final_orbit.Reliability2(m);
 
-                    reliabilities(n,3) = (payload_package.Reliability3(i) + ...
-                        second_stage.Reliability3(j) + ...
-                        lift_off_stage.Reliability3(k) + ...
-                        inclination_change.Reliability3(l) + ...
-                        final_orbit.Reliability3(m))/5;
+                    reliabilities(n,3) = rw1*payload_package.Reliability3(i) + ...
+                        rw2*second_stage.Reliability3(j) + ...
+                        rw3*lift_off_stage.Reliability3(k) + ...
+                        rw4*inclination_change.Reliability3(l) + ...
+                        rw5*final_orbit.Reliability3(m);
 
                     % costs
-                    costs(n,1) = (payload_package.Cost1(i) + ...
-                        second_stage.Cost1(j) + ...
-                        lift_off_stage.Cost1(k) + ...
-                        inclination_change.Cost1(l) + ...
-                        final_orbit.Cost1(m))/5;
+                    costs(n,1) = cw1*payload_package.Cost1(i) + ...
+                        cw2*second_stage.Cost1(j) + ...
+                        cw3*lift_off_stage.Cost1(k) + ...
+                        cw4*inclination_change.Cost1(l) + ...
+                        cw5*final_orbit.Cost1(m);
 
-                    costs(n,2) = (payload_package.Cost2(i) + ...
-                        second_stage.Cost2(j) + ...
-                        lift_off_stage.Cost2(k) + ...
-                        inclination_change.Cost2(l) + ...
-                        final_orbit.Cost2(m))/5;
+                    costs(n,2) = cw1*payload_package.Cost2(i) + ...
+                        cw2*second_stage.Cost2(j) + ...
+                        cw3*lift_off_stage.Cost2(k) + ...
+                        cw4*inclination_change.Cost2(l) + ...
+                        cw5*final_orbit.Cost2(m);
 
-                    costs(n,3) = (payload_package.Cost3(i) + ...
-                        second_stage.Cost3(j) + ...
-                        lift_off_stage.Cost3(k) + ...
-                        inclination_change.Cost3(l) + ...
-                        final_orbit.Cost3(m))/5;
+                    costs(n,3) = cw1*payload_package.Cost3(i) + ...
+                        cw2*second_stage.Cost3(j) + ...
+                        cw3*lift_off_stage.Cost3(k) + ...
+                        cw4*inclination_change.Cost3(l) + ...
+                        cw5*final_orbit.Cost3(m);
 
                     % value
-                    values(n,1) = (payload_package.Value1(i) + ...
-                        second_stage.Value1(j) + ...
-                        lift_off_stage.Value1(k) + ...
-                        inclination_change.Value1(l) + ...
-                        final_orbit.Value1(m))/5;
+                    values(n,1) = vw1*payload_package.Value1(i) + ...
+                        vw2*second_stage.Value1(j) + ...
+                        vw3*lift_off_stage.Value1(k) + ...
+                        vw4*inclination_change.Value1(l) + ...
+                        vw5*final_orbit.Value1(m);
 
-                    values(n,2) = (payload_package.Value2(i) + ...
-                        second_stage.Value2(j) + ...
-                        lift_off_stage.Value2(k) + ...
-                        inclination_change.Value2(l) + ...
-                        final_orbit.Value2(m))/5;
+                    values(n,2) = vw1*payload_package.Value2(i) + ...
+                        vw2*second_stage.Value2(j) + ...
+                        vw3*lift_off_stage.Value2(k) + ...
+                        vw4*inclination_change.Value2(l) + ...
+                        vw5*final_orbit.Value2(m);
 
-                    values(n,3) = (payload_package.Value3(i) + ...
-                        second_stage.Value3(j) + ...
-                        lift_off_stage.Value3(k) + ...
-                        inclination_change.Value3(l) + ...
-                        final_orbit.Value3(m))/5;
+                    values(n,3) = vw1*payload_package.Value3(i) + ...
+                        vw2*second_stage.Value3(j) + ...
+                        vw3*lift_off_stage.Value3(k) + ...
+                        vw4*inclination_change.Value3(l) + ...
+                        vw5*final_orbit.Value3(m);
 
 
                     n = n + 1;
@@ -261,26 +290,32 @@ tmp = tmp | (dsi(:,2) ~= 1 & (dsi(:,5) == 5 | dsi(:,5) == 6 | dsi(:,5) == 7));
 
 %% plot value/cost
 
-x = costs(:,1);
+x = costs(:,2);
 x(~tmp) = nan;
 
-y = values(:,1);
+y = values(:,2);
 y(~tmp) = nan;
 
 figure(1)
 
-plot(x,y,'k.','MarkerSize',10)
+plot(x,y,'k.','MarkerSize',15)
+xlabel("Normalized Success Factor",'FontSize',16)
+ylabel("Normalized Mission Value",'FontSize',16)
+title("Value/Reliability Trade",'FontSize',18)
 
 hold on
 
 %%% look in areas of the plot %%%
 
-% ii = find(y > 1.8 & x < 2,10);
-% i = 1;
-% plot(x(ii(i)),y(ii(i)),'o')
+% ii = find(y > 1.7 & x < 0.7);
+% i = 4;
+% plot(x(ii(i)),y(ii(i)),'ro','MarkerSize',10,'LineWidth',2)
 % design_space(ii(i))
 
-%%% look at payloads %%%
+% xlim([0.85 1.1])
+% ylim([0.75 2])
+
+%% look at payloads %%%
 
 % ii = find(dsi(:,1) == 1); % payload == all
 % plot(x(ii),y(ii),'r.','MarkerSize',15)
@@ -302,23 +337,23 @@ hold on
 
 %%% look at second stage %%%
 
-% ii = find(dsi(:,2) == 1); % second stage == solar sail
-% plot(x(ii),y(ii),'ro','MarkerSize',6)
-% 
-% ii = find(dsi(:,2) == 2); % second stage == chemical
-% plot(x(ii),y(ii),'go','MarkerSize',6)
-% 
-% ii = find(dsi(:,2) == 3); % second stage == ion
-% plot(x(ii),y(ii),'bo','MarkerSize',6)
-% 
-% ii = find(dsi(:,2) == 4); % second stage == nuclear
-% plot(x(ii),y(ii),'co','MarkerSize',6)
-% 
-% h(1) = plot(nan,nan,'ro');
-% h(2) = plot(nan,nan,'go');
-% h(3) = plot(nan,nan,'bo');
-% h(4) = plot(nan,nan,'co');
-% legend(h,["Solar Sail" "Chemical" "Ion" "Nuclear"],'Location','best')
+ii = find(dsi(:,2) == 1); % second stage == solar sail
+plot(x(ii),y(ii),'ro','MarkerSize',6)
+
+ii = find(dsi(:,2) == 2); % second stage == chemical
+plot(x(ii),y(ii),'go','MarkerSize',6)
+
+ii = find(dsi(:,2) == 3); % second stage == ion
+plot(x(ii),y(ii),'bo','MarkerSize',6)
+
+ii = find(dsi(:,2) == 4); % second stage == nuclear
+plot(x(ii),y(ii),'co','MarkerSize',6)
+
+h(1) = plot(nan,nan,'ro');
+h(2) = plot(nan,nan,'go');
+h(3) = plot(nan,nan,'bo');
+h(4) = plot(nan,nan,'co');
+legend(h,["Solar Sail" "Chemical" "Ion" "Nuclear"],'Location','best')
 
 %%% look at lift off stage %%%
 
@@ -355,22 +390,22 @@ hold on
 %%% look at inclination change %%%
 
 % ii = find(dsi(:,4) == 1); % inclination change == Direct
-% plot(x(ii),y(ii),'rs','MarkerSize',8)
+% plot(x(ii),y(ii),'rs','MarkerSize',10,'LineWidth',1.1)
 % 
 % ii = find(dsi(:,4) == 2); % inclination change == bielliptic
-% plot(x(ii),y(ii),'gs','MarkerSize',8)
+% plot(x(ii),y(ii),'gs','MarkerSize',10,'LineWidth',1.1)
 % 
 % ii = find(dsi(:,4) == 3); % inclination change == solar sail
-% plot(x(ii),y(ii),'bs','MarkerSize',8)
+% plot(x(ii),y(ii),'bs','MarkerSize',10,'LineWidth',1.1)
 % 
 % ii = find(dsi(:,4) == 4); % inclination change == gravity inner
-% plot(x(ii),y(ii),'cs','MarkerSize',8)
+% plot(x(ii),y(ii),'cs','MarkerSize',10,'LineWidth',1.1)
 % 
 % ii = find(dsi(:,4) == 5); % inclination change == gravity outer
-% plot(x(ii),y(ii),'ms','MarkerSize',8)
+% plot(x(ii),y(ii),'ms','MarkerSize',10,'LineWidth',1.1)
 % 
 % ii = find(dsi(:,4) == 6); % inclination change == venus GA + solar sail
-% plot(x(ii),y(ii),'ys','MarkerSize',8)
+% plot(x(ii),y(ii),'ys','MarkerSize',10,'LineWidth',1.1)
 % 
 % h(1) = plot(nan,nan,'rs');
 % h(2) = plot(nan,nan,'gs');
@@ -380,90 +415,42 @@ hold on
 % h(6) = plot(nan,nan,'ys');
 % legend(h,["Direct Transfer from 1 AU" "Bielliptic Transfer" "Solar Sail" "Gravity Assist Inner Planets" "Gravity Assist Outer Planets" "Venus GA + Solar Sail"],'Location','best')
 
+%% look at final orbit %%%
 
+% ii = find(dsi(:,5) == 1); % inclination change == elliptical w/ venus
+% plot(x(ii),y(ii),'rp','MarkerSize',8)
+% 
+% ii = find(dsi(:,5) == 2); % inclination change == elliptical w/ earth
+% plot(x(ii),y(ii),'gp','MarkerSize',8)
+% 
+% ii = find(dsi(:,5) == 3); % inclination change == elliptical w/ mars
+% plot(x(ii),y(ii),'bp','MarkerSize',8)
+% 
+% ii = find(dsi(:,5) == 4); % inclination change == ulysses (jupiter)
+% plot(x(ii),y(ii),'cp','MarkerSize',8)
+% 
+% ii = find(dsi(:,5) == 5); % inclination change == orbit cranking
+% plot(x(ii),y(ii),'mp','MarkerSize',8)
+% 
+% ii = find(dsi(:,5) == 6); % inclination change == non-keplarian
+% plot(x(ii),y(ii),'yp','MarkerSize',8)
+% 
+% ii = find(dsi(:,5) == 7); % inclination change == polaris
+% plot(x(ii),y(ii),'kp','MarkerSize',8)
+% 
+% h(1) = plot(nan,nan,'rp');
+% h(2) = plot(nan,nan,'gp');
+% h(3) = plot(nan,nan,'bp');
+% h(4) = plot(nan,nan,'cp');
+% h(5) = plot(nan,nan,'mp');
+% h(6) = plot(nan,nan,'yp');
+% h(7) = plot(nan,nan,'kp');
+% legend(h,["Elliptical Orbit (Venus flyby)" "Elliptical Orbit (Earth flyby)" "Elliptical Orbit (Mars flyby)" "Modified Ulysses orbit (Jupiter flyby)" "Circular orbit (Spiral + Orbit Cranking)" "Non-Keplarian Orbit (beta=0.8)" "POLARIS Final Orbit"],'Location','best')
+
+
+% plot the reference mission
 plot(1,1,'rx','MarkerSize',15,'LineWidth',2)
 
 hold off
 
 grid on
-
-%% evaluate the merits of the design
-
-% % data to pass into function
-% data.payload_package = payload_package;
-% data.second_stage = second_stage;
-% data.lift_off_stage = lift_off_stage;
-% data.inclination_change = inclination_change;
-% data.final_orbit = final_orbit;
-% 
-% % initialize arrays
-% reliabilities = zeros(N_total,1);
-% costs = zeros(N_total,1);
-% values = zeros(N_total,1);
-% 
-% % iterate over all designs
-% for i = 1:N_total
-%     [reliabilities(i), costs(i), values(i)] = calc_merit(design_space(i),data);
-% end
-% 
-% function [reliability, cost, value] = calc_merit(design,data)
-% 
-% 
-% reliability = nan;
-% cost = nan;
-% value = nan;
-% 
-% if design.inclination_change == "Direct Transfer from 1 AU" || ...
-%         design.inclination_change == "Bielliptic Transfer" || ...
-%         design.inclination_change == "Gravity Assist Inner Planets" || ...
-%         design.inclination_change == "Gravity Assist Outer Planets"
-% 
-%     if design.second_stage == "Solar Sail" || design.second_stage == "Ion"
-%         return
-%     end
-% end
-% 
-% if design.inclination_change == "Solar Sail" || ...
-%         design.inclination_change == "Venus GA + Solar Sail"
-% 
-%     if design.second_stage ~= "Solar Sail"
-%         return
-%     end
-% end
-% 
-% if design.final_orbit == "Elliptical Orbit (Venus flyby)"
-% 
-%     if design.inclination_change ~= "Gravity Assist Inner Planets" && ...
-%             design.inclination_change ~= "Venus GA + Solar Sail"
-%         return
-%     end
-% end
-% 
-% if design.final_orbit == "Elliptical Orbit (Earth flyby)" || ...
-%         "Elliptical Orbit (Mars flyby)"
-% 
-%     if design.inclination_change ~= "Gravity Assist Inner Planets"
-%         return
-%     end
-% end
-% 
-% if design.final_orbit == "Modified Ulysses orbit (Jupiter flyby)"
-%     if design.inclination_change ~= "Gravity Assist Outer Planets"
-%         return
-%     end
-% end
-% 
-% if design.final_orbit == "Circular orbit (Spiral + Orbit Cranking)" || ...
-%         design.final_orbit == "Non-Keplarian Orbit (beta=0.8)" || ...
-%         design.final_orbit == "POLARIS Final Orbit"
-%     if design.second_stage ~= "Solar Sail"
-%         return
-%     end
-% end
-% 
-% reliability = payload_package(design.payload_package == data.payload_package.Option,'Reliability1') + ...
-%     second_stage(design.second_stage == data.second_stage.Option,'Reliability1') + ...
-%     lift_off_stage(design.lif)
-% 
-% 
-% end
