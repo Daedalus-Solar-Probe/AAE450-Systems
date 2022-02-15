@@ -3,6 +3,60 @@
 clear
 clc;
 
+%% Inputs
+
+%%%%%%%%%%%% Weights %%%%%%%%%%%%%
+
+% payload
+cw1 = 0.2; % cost
+vw1 = 0.50; % mission value
+rw1 = 0.05; % feasibility
+
+% second stage propulsion system cost weight
+cw2 = 0.2; % cost
+vw2 = 0; % mission value
+rw2 = 0.30; % feasibility
+
+% lift off stage cost weight
+cw3 = 0.2; % cost
+vw3 = 0.05; % mission value
+rw3 = 0.40; % feasibility
+
+% inclination change method cost weight
+cw4 = 0.2; % cost
+vw4 = 0.20; % mission value
+rw4 = 0.15; % feasibility
+
+% final orbit cost weight
+cw5 = 0.2; % cost
+vw5 = 0.25; % mission value
+rw5 = 0.1; % success/reliability
+
+% % payload
+% cw1 = 0.20; % cost
+% vw1 = 0.20; % mission value
+% rw1 = 0.20; % success/reliability
+% 
+% % second stage propulsion system cost weight
+% cw2 = 0.20; % cost
+% vw2 = 0.20; % mission value
+% rw2 = 0.20; % success/reliability
+% 
+% % lift off stage cost weight
+% cw3 = 0.20; % cost
+% vw3 = 0.20; % mission value
+% rw3 = 0.20; % success/reliability
+% 
+% % inclination change method cost weight
+% cw4 = 0.20; % cost
+% vw4 = 0.20; % mission value
+% rw4 = 0.20; % success/reliability
+% 
+% % final orbit cost weight
+% cw5 = 0.20; % cost
+% vw5 = 0.20; % mission value
+% rw5 = 0.20; % success/reliability
+
 %% load payload package data
 
 % Set up the Import Options and import the data
@@ -56,7 +110,7 @@ opts = spreadsheetImportOptions("NumVariables", 11);
 
 % Specify sheet and range
 opts.Sheet = "Lift-off Stage";
-opts.DataRange = "A3:K9";
+opts.DataRange = "A3:K7";
 
 % Specify column names and types
 opts.VariableNames = ["ID", "Option", "Reliability1", "Reliability2", "Reliability3", "Cost1", "Cost2", "Cost3", "Value1", "Value2", "Value3"];
@@ -84,7 +138,7 @@ opts = spreadsheetImportOptions("NumVariables", 11);
 
 % Specify sheet and range
 opts.Sheet = "Inclination Change";
-opts.DataRange = "A3:K8";
+opts.DataRange = "A3:K7";
 
 % Specify column names and types
 opts.VariableNames = ["ID", "Option", "Reliability1", "Reliability2", "Reliability3", "Cost1", "Cost2", "Cost3", "Value1", "Value2", "Value3"];
@@ -128,35 +182,6 @@ final_orbit = readtable("Master Morphological Matrix.xlsx", opts, "UseExcel", fa
 
 % Clear temporary variables
 clear opts
-
-%% Inputs
-
-%%%%%%%%%%%% Weights %%%%%%%%%%%%%
-
-% payload
-cw1 = 1/5; % cost
-vw1 = 1/5; % mission value
-rw1 = 1/5; % success/reliability
-
-% second stage propulsion system cost weight
-cw2 = 1/5; % cost
-vw2 = 1/5; % mission value
-rw2 = 1/5; % success/reliability
-
-% lift off stage cost weight
-cw3 = 1/5; % cost
-vw3 = 1/5; % mission value
-rw3 = 1/5; % success/reliability
-
-% inclination change method cost weight
-cw4 = 1/5; % cost
-vw4 = 1/5; % mission value
-rw4 = 1/5; % success/reliability
-
-% final orbit cost weight
-cw5 = 1/5; % cost
-vw5 = 1/5; % mission value
-rw5 = 1/5; % success/reliability
 
 %% create permuation matrix
 
@@ -288,35 +313,40 @@ tmp = tmp | (dsi(:,2) ~= 1 & (dsi(:,5) == 5 | dsi(:,5) == 6 | dsi(:,5) == 7));
 % values(tmp) = nan;
 % reliabilities(tmp) = nan;
 
-%% plot value/cost
+%% plot
 
-x = costs(:,2);
+m = 1;
+
+x = costs(:,m);
 x(~tmp) = nan;
 
-y = values(:,2);
+y = values(:,m);
 y(~tmp) = nan;
 
 figure(1)
 
 plot(x,y,'k.','MarkerSize',15)
-xlabel("Normalized Success Factor",'FontSize',16)
-ylabel("Normalized Mission Value",'FontSize',16)
-title("Value/Reliability Trade",'FontSize',18)
+xlabel("Cost",'FontSize',16)
+ylabel("Value",'FontSize',16)
+title("Relative Value/Cost Trade",'FontSize',18)
+
+% xlim([0 5])
+% ylim([0.3 1.2])
 
 hold on
 
 %%% look in areas of the plot %%%
-
+% 
 % ii = find(y > 1.7 & x < 0.7);
 % i = 4;
 % plot(x(ii(i)),y(ii(i)),'ro','MarkerSize',10,'LineWidth',2)
 % design_space(ii(i))
-
+% 
 % xlim([0.85 1.1])
 % ylim([0.75 2])
 
-%% look at payloads %%%
-
+%%% look at payloads %%%
+% 
 % ii = find(dsi(:,1) == 1); % payload == all
 % plot(x(ii),y(ii),'r.','MarkerSize',15)
 % 
@@ -333,30 +363,30 @@ hold on
 % h(2) = plot(nan,nan,'g.');
 % h(3) = plot(nan,nan,'b.');
 % h(4) = plot(nan,nan,'c.');
-% legend(h,["All" "Remote + Mag" "In Situ" "DSI-UEVI-MAG"],'Location','best')
+% legend(h,["All" "Remote + Mag" "In Situ" "DSI-UEVI-MAG"],'Location','bestoutside')
 
 %%% look at second stage %%%
-
-ii = find(dsi(:,2) == 1); % second stage == solar sail
-plot(x(ii),y(ii),'ro','MarkerSize',6)
-
-ii = find(dsi(:,2) == 2); % second stage == chemical
-plot(x(ii),y(ii),'go','MarkerSize',6)
-
-ii = find(dsi(:,2) == 3); % second stage == ion
-plot(x(ii),y(ii),'bo','MarkerSize',6)
-
-ii = find(dsi(:,2) == 4); % second stage == nuclear
-plot(x(ii),y(ii),'co','MarkerSize',6)
-
-h(1) = plot(nan,nan,'ro');
-h(2) = plot(nan,nan,'go');
-h(3) = plot(nan,nan,'bo');
-h(4) = plot(nan,nan,'co');
-legend(h,["Solar Sail" "Chemical" "Ion" "Nuclear"],'Location','best')
+% 
+% ii = find(dsi(:,2) == 1); % second stage == solar sail
+% plot(x(ii),y(ii),'ro','MarkerSize',6)
+% 
+% ii = find(dsi(:,2) == 2); % second stage == chemical
+% plot(x(ii),y(ii),'go','MarkerSize',6)
+% 
+% ii = find(dsi(:,2) == 3); % second stage == ion
+% plot(x(ii),y(ii),'bo','MarkerSize',6)
+% 
+% ii = find(dsi(:,2) == 4); % second stage == nuclear
+% plot(x(ii),y(ii),'co','MarkerSize',6)
+% 
+% h(1) = plot(nan,nan,'ro');
+% h(2) = plot(nan,nan,'go');
+% h(3) = plot(nan,nan,'bo');
+% h(4) = plot(nan,nan,'co');
+% legend(h,["Solar Sail" "Chemical" "Ion" "Nuclear"],'Location','bestoutside')
 
 %%% look at lift off stage %%%
-
+% 
 % ii = find(dsi(:,3) == 1); % first stage = SLS
 % plot(x(ii),y(ii),'r^','MarkerSize',8)
 % 
@@ -385,10 +415,10 @@ legend(h,["Solar Sail" "Chemical" "Ion" "Nuclear"],'Location','best')
 % h(5) = plot(nan,nan,'m^');
 % h(6) = plot(nan,nan,'y^');
 % h(7) = plot(nan,nan,'k^');
-% legend(h,["NASA SLS" "SpaceX F-Heavy" "SpaceX Starship" "ULA Atlas V 551" "ULA Delta IV Heavy" "ULA Vulcan Centaur Heavy" "Soyuz 2.1b"],'Location','best')
+% legend(h,["NASA SLS" "SpaceX F-Heavy" "SpaceX Starship" "ULA Atlas V 551" "ULA Delta IV Heavy" "ULA Vulcan Centaur Heavy" "Soyuz 2.1b"],'Location','bestoutside')
 
 %%% look at inclination change %%%
-
+% 
 % ii = find(dsi(:,4) == 1); % inclination change == Direct
 % plot(x(ii),y(ii),'rs','MarkerSize',10,'LineWidth',1.1)
 % 
@@ -413,10 +443,10 @@ legend(h,["Solar Sail" "Chemical" "Ion" "Nuclear"],'Location','best')
 % h(4) = plot(nan,nan,'cs');
 % h(5) = plot(nan,nan,'ms');
 % h(6) = plot(nan,nan,'ys');
-% legend(h,["Direct Transfer from 1 AU" "Bielliptic Transfer" "Solar Sail" "Gravity Assist Inner Planets" "Gravity Assist Outer Planets" "Venus GA + Solar Sail"],'Location','best')
+% legend(h,["Direct Transfer from 1 AU" "Bielliptic Transfer" "Solar Sail" "Gravity Assist Inner Planets" "Gravity Assist Outer Planets" "Venus GA + Solar Sail"],'Location','bestoutside')
 
-%% look at final orbit %%%
-
+%%% look at final orbit %%%
+% 
 % ii = find(dsi(:,5) == 1); % inclination change == elliptical w/ venus
 % plot(x(ii),y(ii),'rp','MarkerSize',8)
 % 
@@ -445,12 +475,324 @@ legend(h,["Solar Sail" "Chemical" "Ion" "Nuclear"],'Location','best')
 % h(5) = plot(nan,nan,'mp');
 % h(6) = plot(nan,nan,'yp');
 % h(7) = plot(nan,nan,'kp');
-% legend(h,["Elliptical Orbit (Venus flyby)" "Elliptical Orbit (Earth flyby)" "Elliptical Orbit (Mars flyby)" "Modified Ulysses orbit (Jupiter flyby)" "Circular orbit (Spiral + Orbit Cranking)" "Non-Keplarian Orbit (beta=0.8)" "POLARIS Final Orbit"],'Location','best')
+% legend(h,["Elliptical Orbit (Venus flyby)" "Elliptical Orbit (Earth flyby)" "Elliptical Orbit (Mars flyby)" "Modified Ulysses orbit (Jupiter flyby)" "Circular orbit (Spiral + Orbit Cranking)" "Non-Keplarian Orbit (beta=0.8)" "POLARIS Final Orbit"],'Location','bestoutside')
 
 
-% plot the reference mission
-plot(1,1,'rx','MarkerSize',15,'LineWidth',2)
+%%% plot the reference mission
+% plot(1,1,'rx','MarkerSize',15,'LineWidth',2)
 
 hold off
 
 grid on
+
+%% Payload Value/Cost Sensitivity
+
+figure(2)
+
+group = categorical(dsi(:,1),1:N_pay,payload_package.Option);
+
+[~,ax,bigax] = gplotmatrix(costs,values,group,[],'.',5);
+grid on
+
+bigax.YLabel.String = "Relative Value";
+bigax.XLabel.String = "Relative Cost";
+bigax.Title.String = "Value/Cost Payload Sensitivity";
+
+for i = 1:numel(ax)
+    ax(i).XLim = [0 5];
+    ax(i).YLim = [0.2 2.2];
+    ax(i).XGrid = 'on';
+    ax(i).YGrid = 'on';
+end
+
+%% Second Stage Value/Cost Sensitivity
+
+figure(3)
+
+group = categorical(dsi(:,2),1:N_sec,second_stage.Option);
+
+[~,ax,bigax] = gplotmatrix(costs,values,group,[],'.',5);
+grid on
+
+bigax.YLabel.String = "Relative Value";
+bigax.XLabel.String = "Relative Cost";
+bigax.Title.String = "Value/Cost Second Stage Propulsion Sensitivity";
+
+for i = 1:numel(ax)
+    ax(i).XLim = [0 5];
+    ax(i).YLim = [0.2 2.2];
+    ax(i).XGrid = 'on';
+    ax(i).YGrid = 'on';
+end
+
+%% Launch Vehicle Value/Cost Sensitivity
+
+figure(4)
+
+group = categorical(dsi(:,3),1:N_lift,lift_off_stage.Option);
+
+[~,ax,bigax] = gplotmatrix(costs,values,group,[],'.',5);
+grid on
+
+bigax.YLabel.String = "Relative Value";
+bigax.XLabel.String = "Relative Cost";
+bigax.Title.String = "Value/Cost Launch Vehicle Sensitivity";
+
+for i = 1:numel(ax)
+    ax(i).XLim = [0 5];
+    ax(i).YLim = [0.2 3.75];
+    ax(i).XGrid = 'on';
+    ax(i).YGrid = 'on';
+end
+
+%% Inclination Change Value/Cost Sensitivity
+
+figure(5)
+
+group = categorical(dsi(:,4),1:N_incl,inclination_change.Option);
+
+[~,ax,bigax] = gplotmatrix(costs,values,group,[],'.',5);
+grid on
+
+bigax.YLabel.String = "Relative Value";
+bigax.XLabel.String = "Relative Cost";
+bigax.Title.String = "Value/Cost Inclination Change Sensitivity";
+
+for i = 1:numel(ax)
+    ax(i).XLim = [0 5];
+    ax(i).YLim = [0.2 2.2];
+    ax(i).XGrid = 'on';
+    ax(i).YGrid = 'on';
+end
+
+%% Final Orbit Value/Cost Sensitivity
+
+figure(6)
+
+group = categorical(dsi(:,5),1:N_orbit,final_orbit.Option);
+
+[~,ax,bigax] = gplotmatrix(costs,values,group,[],'.',5);
+grid on
+
+bigax.YLabel.String = "Relative Value";
+bigax.XLabel.String = "Relative Cost";
+bigax.Title.String = "Value/Cost Final Orbit Sensitivity";
+
+for i = 1:numel(ax)
+    ax(i).XLim = [0 5];
+    ax(i).YLim = [0.2 2.2];
+    ax(i).XGrid = 'on';
+    ax(i).YGrid = 'on';
+end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Payload Reliability/Cost Sensitivity
+
+figure(7)
+
+group = categorical(dsi(:,1),1:N_pay,payload_package.Option);
+
+[~,ax,bigax] = gplotmatrix(costs,reliabilities,group,[],'.',5);
+grid on
+
+bigax.YLabel.String = "Relative Reliability";
+bigax.XLabel.String = "Relative Cost";
+bigax.Title.String = "Reliability/Cost Payload Sensitivity";
+
+for i = 1:numel(ax)
+    ax(i).XLim = [0 5];
+    ax(i).YLim = [0.3 1.2];
+    ax(i).XGrid = 'on';
+    ax(i).YGrid = 'on';
+end
+
+%% Second Stage Reliability/Cost Sensitivity
+
+figure(8)
+
+group = categorical(dsi(:,2),1:N_sec,second_stage.Option);
+
+[~,ax,bigax] = gplotmatrix(costs,reliabilities,group,[],'.',5);
+grid on
+
+bigax.YLabel.String = "Relative Reliability";
+bigax.XLabel.String = "Relative Cost";
+bigax.Title.String = "Reliability/Cost Second Stage Propulsion Sensitivity";
+
+for i = 1:numel(ax)
+    ax(i).XLim = [0 5];
+    ax(i).YLim = [0.3 1.2];
+    ax(i).XGrid = 'on';
+    ax(i).YGrid = 'on';
+end
+
+%% Launch Vehicle Reliability/Cost Sensitivity
+
+figure(9)
+
+group = categorical(dsi(:,3),1:N_lift,lift_off_stage.Option);
+
+[~,ax,bigax] = gplotmatrix(costs,reliabilities,group,[],'.',5);
+grid on
+
+bigax.YLabel.String = "Relative Reliability";
+bigax.XLabel.String = "Relative Cost";
+bigax.Title.String = "Reliability/Cost Launch Vehicle Sensitivity";
+
+for i = 1:numel(ax)
+    ax(i).XLim = [0 5];
+    ax(i).YLim = [0.3 1.2];
+    ax(i).XGrid = 'on';
+    ax(i).YGrid = 'on';
+end
+
+%% Inclination Change Reliability/Cost Sensitivity
+
+figure(10)
+
+group = categorical(dsi(:,4),1:N_incl,inclination_change.Option);
+
+[~,ax,bigax] = gplotmatrix(costs,reliabilities,group,[],'.',5);
+grid on
+
+bigax.YLabel.String = "Relative Reliability";
+bigax.XLabel.String = "Relative Cost";
+bigax.Title.String = "Reliability/Cost Inclination Change Sensitivity";
+
+for i = 1:numel(ax)
+    ax(i).XLim = [0 5];
+    ax(i).YLim = [0.3 1.2];
+    ax(i).XGrid = 'on';
+    ax(i).YGrid = 'on';
+end
+
+%% Final Orbit Reliability/Cost Sensitivity
+
+figure(11)
+
+group = categorical(dsi(:,5),1:N_orbit,final_orbit.Option);
+
+[~,ax,bigax] = gplotmatrix(costs,reliabilities,group,[],'.',5);
+grid on
+
+
+bigax.YLabel.String = "Relative Reliability";
+bigax.XLabel.String = "Relative Cost";
+bigax.Title.String = "Reliability/Cost Final Orbit Sensitivity";
+
+for i = 1:numel(ax)
+    ax(i).XLim = [0 5];
+    ax(i).YLim = [0.3 1.2];
+    ax(i).XGrid = 'on';
+    ax(i).YGrid = 'on';
+end
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Payload Value/Feasibility Sensitivity
+
+figure(12)
+
+group = categorical(dsi(:,1),1:N_pay,payload_package.Option);
+
+[~,ax,bigax] = gplotmatrix(reliabilities,values,group,[],'.',5);
+grid on
+
+bigax.YLabel.String = "Relative Value";
+bigax.XLabel.String = "Relative Feasibility";
+bigax.Title.String = "Value/Feasibility Payload Sensitivity";
+
+for i = 1:numel(ax)
+    ax(i).XLim = [0.2 1.2];
+    ax(i).YLim = [0 2.2];
+    ax(i).XGrid = 'on';
+    ax(i).YGrid = 'on';
+end
+
+%% Second Stage Value/Feasibility Sensitivity
+
+figure(13)
+
+group = categorical(dsi(:,2),1:N_sec,second_stage.Option);
+
+[~,ax,bigax] = gplotmatrix(reliabilities,values,group,[],'.',5);
+grid on
+
+bigax.YLabel.String = "Relative Value";
+bigax.XLabel.String = "Relative Feasibility";
+bigax.Title.String = "Value/Feasibility Second Stage Propulsion Sensitivity";
+
+for i = 1:numel(ax)
+    ax(i).XLim = [0.2 1.2];
+    ax(i).YLim = [0 2.2];
+    ax(i).XGrid = 'on';
+    ax(i).YGrid = 'on';
+end
+
+%% Launch Vehicle Value/Feasibility Sensitivity
+
+figure(14)
+
+group = categorical(dsi(:,3),1:N_lift,lift_off_stage.Option);
+
+[~,ax,bigax] = gplotmatrix(reliabilities,values,group,[],'.',5);
+grid on
+
+bigax.YLabel.String = "Relative Value";
+bigax.XLabel.String = "Relative Feasibility";
+bigax.Title.String = "Value/Feasibility Launch Vehicle Sensitivity";
+
+for i = 1:numel(ax)
+    ax(i).XLim = [0.2 1.2];
+    ax(i).YLim = [0 2.2];
+    ax(i).XGrid = 'on';
+    ax(i).YGrid = 'on';
+end
+
+%% Inclination Change Value/Feasibility Sensitivity
+
+figure(15)
+
+group = categorical(dsi(:,4),1:N_incl,inclination_change.Option);
+
+[~,ax,bigax] = gplotmatrix(reliabilities,values,group,[],'.',5);
+grid on
+
+bigax.YLabel.String = "Relative Value";
+bigax.XLabel.String = "Relative Feasibility";
+bigax.Title.String = "Value/Feasibility Inclination Change Sensitivity";
+
+for i = 1:numel(ax)
+    ax(i).XLim = [0.2 1.2];
+    ax(i).YLim = [0 2.2];
+    ax(i).XGrid = 'on';
+    ax(i).YGrid = 'on';
+end
+
+%% Final Orbit Reliability/Cost Sensitivity
+
+figure(16)
+
+group = categorical(dsi(:,5),1:N_orbit,final_orbit.Option);
+
+[~,ax,bigax] = gplotmatrix(reliabilities,values,group,[],'.',5);
+grid on
+
+
+bigax.YLabel.String = "Relative Value";
+bigax.XLabel.String = "Relative Feasibility";
+bigax.Title.String = "Value/Feasibility Final Orbit Sensitivity";
+
+for i = 1:numel(ax)
+    ax(i).XLim = [0.2 1.2];
+    ax(i).YLim = [0 2.2];
+    ax(i).XGrid = 'on';
+    ax(i).YGrid = 'on';
+end
+
+
